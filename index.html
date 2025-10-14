@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Code Reviewer - Advanced Code Analysis & Bug Detection</title>
+    <meta name="description" content="AI-powered code analysis tool that detects bugs, security vulnerabilities, and performance issues in your code with advanced machine learning algorithms.">
+    
+    <!-- Performance and Accessibility Meta Tags -->
+    <meta name="theme-color" content="#6366f1">
+    <meta name="color-scheme" content="light">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="AI Code Reviewer Team">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="AI Code Reviewer - Advanced Code Analysis">
+    <meta property="og:description" content="AI-powered code analysis tool that detects bugs, security vulnerabilities, and performance issues">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="./assets/placeholder.svg">
+    
+    <!-- Performance Hints -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    
+    <!-- Preconnect to Google Fonts for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Import Sora font with display swap for performance -->
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Skip links for accessibility -->
+    <div class="skip-links">
+        <a href="#main-content" class="skip-link">Skip to main content</a>
+        <a href="#features" class="skip-link">Skip to features</a>
+        <a href="#analyzer" class="skip-link">Skip to analyzer</a>
+    </div>
+    
+    <!-- Navigation Header -->
+    <header class="header" role="banner">
+        <nav class="nav-container" role="navigation" aria-label="Main navigation">
+            <div class="nav-brand">
+                <h1 class="logo">
+                    <span class="sr-only">AI Code Reviewer - </span>AI Code Reviewer
+                </h1>
+            </div>
+            <ul class="nav-links" role="menubar">
+                <li role="none">
+                    <a href="#features" class="nav-link" role="menuitem" aria-describedby="features-desc">
+                        Features
+                        <span id="features-desc" class="sr-only">Navigate to features section</span>
+                    </a>
+                </li>
+                <li role="none">
+                    <a href="#analyzer" class="nav-link" role="menuitem" aria-describedby="analyzer-desc">
+                        Analyzer
+                        <span id="analyzer-desc" class="sr-only">Navigate to code analyzer section</span>
+                    </a>
+                </li>
+                <li role="none" id="profile-nav-item" style="display: none;" data-requires-auth>
+                    <a href="#user-profile" class="nav-link" role="menuitem" aria-describedby="profile-desc">
+                        Profile
+                        <span id="profile-desc" class="sr-only">Navigate to user profile section</span>
+                    </a>
+                </li>
+                <li role="none" id="auth-nav-item">
+                    <!-- Authentication UI will be inserted here -->
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" role="main">
+        <!-- Hero Section -->
+        <section class="hero" aria-labelledby="hero-title">
+            <div class="hero-container">
+                <div class="hero-content glass-card">
+                    <h2 id="hero-title" class="hero-title">AI-Powered Code Analysis & Bug Detection</h2>
+                    <p class="hero-subtitle">
+                        Detect bugs, security vulnerabilities, and performance issues in your code 
+                        with our advanced AI-powered analysis engine. Get instant feedback and 
+                        actionable insights to improve your code quality.
+                    </p>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary" type="button" aria-describedby="try-now-desc">
+                            Try It Now
+                            <span id="try-now-desc" class="sr-only">Start using the AI code analyzer tool</span>
+                        </button>
+                        <button class="btn btn-secondary" type="button" aria-describedby="explore-desc">
+                            Explore Features
+                            <span id="explore-desc" class="sr-only">Learn more about available features</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Circuit Board City Section -->
+        <section id="features" class="circuit-city" aria-labelledby="features-title">
+            <div class="circuit-background">
+                <div class="circuit-lines"></div>
+                <div class="circuit-nodes"></div>
+            </div>
+            <div class="section-container">
+                <div class="section-content glass-card-dark">
+                    <h3 id="features-title" class="section-title">Advanced AI Analysis Engine</h3>
+                    <p class="section-description">
+                        Our sophisticated machine learning algorithms analyze your code structure, 
+                        patterns, and potential vulnerabilities to provide comprehensive insights.
+                    </p>
+                    <div class="feature-grid" role="list" aria-label="Key features">
+                        <div class="feature-card glass-card-dark" role="listitem" tabindex="0" aria-labelledby="feature-1-title" aria-describedby="feature-1-desc">
+                            <div class="feature-icon" aria-hidden="true">🔍</div>
+                            <h4 id="feature-1-title" class="feature-title">Deep Code Analysis</h4>
+                            <p id="feature-1-desc" class="feature-description">Analyzes code patterns, complexity, and potential issues</p>
+                        </div>
+                        <div class="feature-card glass-card-dark" role="listitem" tabindex="0" aria-labelledby="feature-2-title" aria-describedby="feature-2-desc">
+                            <div class="feature-icon" aria-hidden="true">🛡️</div>
+                            <h4 id="feature-2-title" class="feature-title">Security Scanning</h4>
+                            <p id="feature-2-desc" class="feature-description">Detects vulnerabilities and security anti-patterns</p>
+                        </div>
+                        <div class="feature-card glass-card-dark" role="listitem" tabindex="0" aria-labelledby="feature-3-title" aria-describedby="feature-3-desc">
+                            <div class="feature-icon" aria-hidden="true">⚡</div>
+                            <h4 id="feature-3-title" class="feature-title">Performance Insights</h4>
+                            <p id="feature-3-desc" class="feature-description">Identifies bottlenecks and optimization opportunities</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Editor Interface Section -->
+        <section id="analyzer" class="code-editor" aria-labelledby="analyzer-title">
+            <div class="section-container">
+                <h3 id="analyzer-title" class="section-title">Interactive Code Analysis</h3>
+                <div class="editor-layout">
+                    <div class="editor-panel glass-card">
+                        <div class="panel-header">
+                            <h4 class="panel-title">Code Editor</h4>
+                            <div class="editor-controls" role="toolbar" aria-label="Code editor controls">
+                                <input type="file" id="file-upload" accept=".py,.js,.ts,.java,.cpp,.c,.cs,.php,.rb,.go,.rs,.swift" style="display: none;">
+                                <button class="control-btn glass-btn" aria-label="Upload code file" aria-describedby="upload-btn-desc" onclick="document.getElementById('file-upload').click()">
+                                    <span aria-hidden="true">📁</span>
+                                    <span id="upload-btn-desc" class="sr-only">Upload a code file for analysis</span>
+                                </button>
+                                <button class="control-btn glass-btn" aria-label="Run code analysis" aria-describedby="run-btn-desc">
+                                    <span aria-hidden="true">▶️</span>
+                                    <span id="run-btn-desc" class="sr-only">Execute analysis on the current code</span>
+                                </button>
+                                <button class="control-btn glass-btn" aria-label="Clear code editor" aria-describedby="clear-btn-desc">
+                                    <span aria-hidden="true">🗑️</span>
+                                    <span id="clear-btn-desc" class="sr-only">Remove all code from the editor</span>
+                                </button>
+                                <div id="auth-status-indicator" class="auth-status-indicator" style="display: none;">
+                                    <span class="status-icon">👤</span>
+                                    <span class="status-text">Signed in</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-content">
+                            <div class="code-editor-content" role="application" aria-label="Code editor">
+                                <div class="line-numbers" aria-hidden="true">
+                                    <span>1</span>
+                                    <span>2</span>
+                                    <span>3</span>
+                                    <span>4</span>
+                                    <span>5</span>
+                                    <span>6</span>
+                                    <span>7</span>
+                                    <span>8</span>
+                                    <span>9</span>
+                                    <span>10</span>
+                                </div>
+                                <div class="code-content" role="textbox" aria-multiline="true" aria-label="Python code sample" tabindex="0">
+                                    <pre><code class="language-python" aria-describedby="code-description"><span class="keyword">def</span> <span class="function">calculate_score</span>(<span class="parameter">data</span>):
+    <span class="keyword">if</span> <span class="parameter">data</span> <span class="operator">is</span> <span class="keyword">None</span>:
+        <span class="keyword">return</span> <span class="number">0</span>
+    
+    <span class="comment"># Potential issue: no input validation</span>
+    <span class="variable">score</span> <span class="operator">=</span> <span class="number">0</span>
+    <span class="keyword">for</span> <span class="variable">item</span> <span class="keyword">in</span> <span class="parameter">data</span>:
+        <span class="variable">score</span> <span class="operator">+=</span> <span class="variable">item</span><span class="operator">.</span><span class="property">value</span>
+    
+    <span class="keyword">return</span> <span class="variable">score</span> <span class="operator">/</span> <span class="function">len</span>(<span class="parameter">data</span>)</code></pre>
+                                    <div id="code-description" class="sr-only">
+                                        Python function that calculates a score from data items. Contains potential division by zero issue.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="results-panel glass-card">
+                        <div class="panel-header">
+                            <h4 class="panel-title">Analysis Results</h4>
+                            <div class="analysis-status" role="status" aria-live="polite" aria-atomic="true">
+                                <span class="status-indicator active" aria-hidden="true"></span>
+                                <span class="status-text">Analysis Complete</span>
+                            </div>
+                        </div>
+                        <div class="panel-content">
+                            <div class="analysis-summary">
+                                <div class="summary-item">
+                                    <span class="summary-label">Issues Found:</span>
+                                    <span class="summary-value error">3</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">Code Quality:</span>
+                                    <span class="summary-value warning">B+</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">Security Score:</span>
+                                    <span class="summary-value success">92/100</span>
+                                </div>
+                            </div>
+                            
+                            <div class="issues-list">
+                                <h5 class="issues-title">Detected Issues</h5>
+                                <ul class="issues-container" role="list" aria-label="Code analysis issues">
+                                    <li class="issue-item" role="listitem" tabindex="0" aria-labelledby="issue-1-title" aria-describedby="issue-1-desc">
+                                        <div class="issue-severity error" aria-label="High severity">HIGH</div>
+                                        <div class="issue-details">
+                                            <div id="issue-1-title" class="issue-title">Potential Division by Zero</div>
+                                            <div id="issue-1-desc" class="issue-description">Line 10: Division by len(data) without checking if data is empty</div>
+                                            <div class="issue-location">calculate_score() → line 10</div>
+                                        </div>
+                                    </li>
+                                    <li class="issue-item" role="listitem" tabindex="0" aria-labelledby="issue-2-title" aria-describedby="issue-2-desc">
+                                        <div class="issue-severity warning" aria-label="Medium severity">MEDIUM</div>
+                                        <div class="issue-details">
+                                            <div id="issue-2-title" class="issue-title">Missing Input Validation</div>
+                                            <div id="issue-2-desc" class="issue-description">Function doesn't validate data structure or types</div>
+                                            <div class="issue-location">calculate_score() → line 1</div>
+                                        </div>
+                                    </li>
+                                    <li class="issue-item" role="listitem" tabindex="0" aria-labelledby="issue-3-title" aria-describedby="issue-3-desc">
+                                        <div class="issue-severity info" aria-label="Low severity">LOW</div>
+                                        <div class="issue-details">
+                                            <div id="issue-3-title" class="issue-title">Code Documentation</div>
+                                            <div id="issue-3-desc" class="issue-description">Function lacks proper docstring documentation</div>
+                                            <div class="issue-location">calculate_score() → line 1</div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- User Profile and History Section -->
+        <section id="user-profile" class="user-profile-section" aria-labelledby="profile-title" style="display: none;">
+            <div class="section-container">
+                <h3 id="profile-title" class="section-title">User Profile & Analysis History</h3>
+                <div class="profile-content">
+                    <div class="profile-info glass-card">
+                        <h4 class="profile-info-title">Profile Information</h4>
+                        <div class="profile-details">
+                            <div class="profile-item">
+                                <span class="profile-label">Email:</span>
+                                <span id="user-email" class="profile-value">-</span>
+                            </div>
+                            <div class="profile-item">
+                                <span class="profile-label">Rate Limit Tier:</span>
+                                <span id="user-tier" class="profile-value">-</span>
+                            </div>
+                            <div class="profile-item">
+                                <span class="profile-label">Member Since:</span>
+                                <span id="user-created" class="profile-value">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="analysis-history glass-card">
+                        <div class="history-header">
+                            <h4 class="history-title">Analysis History</h4>
+                            <button id="refresh-history" class="control-btn glass-btn" aria-label="Refresh analysis history">
+                                <span aria-hidden="true">🔄</span>
+                            </button>
+                        </div>
+                        <div id="history-content" class="history-content">
+                            <div class="loading-message">Loading analysis history...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analysis Results Showcase -->
+        <section class="analysis-showcase" aria-labelledby="showcase-title">
+            <div class="section-container">
+                <h3 id="showcase-title" class="section-title">Comprehensive Analysis Results</h3>
+                <div class="showcase-content">
+                    <div class="metrics-grid" role="list" aria-label="Analysis metrics">
+                        <div class="metric-card glass-card" role="listitem" tabindex="0" aria-labelledby="metric-1-title" aria-describedby="metric-1-desc">
+                            <div class="metric-icon" aria-hidden="true">📊</div>
+                            <h4 id="metric-1-title" class="metric-title">Code Quality Score</h4>
+                            <div class="metric-value" aria-label="92 out of 100">92</div>
+                            <div id="metric-1-desc" class="metric-trend positive">+5% from last scan</div>
+                        </div>
+                        <div class="metric-card glass-card" role="listitem" tabindex="0" aria-labelledby="metric-2-title" aria-describedby="metric-2-desc">
+                            <div class="metric-icon" aria-hidden="true">🐛</div>
+                            <h4 id="metric-2-title" class="metric-title">Issues Found</h4>
+                            <div class="metric-value" aria-label="3 issues found">3</div>
+                            <div id="metric-2-desc" class="metric-trend negative">2 critical, 1 minor</div>
+                        </div>
+                        <div class="metric-card glass-card" role="listitem" tabindex="0" aria-labelledby="metric-3-title" aria-describedby="metric-3-desc">
+                            <div class="metric-icon" aria-hidden="true">⚡</div>
+                            <h4 id="metric-3-title" class="metric-title">Processing Time</h4>
+                            <div class="metric-value" aria-label="1.2 seconds">1.2s</div>
+                            <div id="metric-3-desc" class="metric-trend neutral">Average response time</div>
+                        </div>
+                    </div>
+                    
+                    <div class="charts-section">
+                        <div class="chart-container glass-card">
+                            <h4 class="chart-title">Issue Distribution</h4>
+                            <div class="chart-content">
+                                <div class="pie-chart">
+                                    <div class="pie-slice critical" style="--percentage: 40"></div>
+                                    <div class="pie-slice warning" style="--percentage: 35"></div>
+                                    <div class="pie-slice info" style="--percentage: 25"></div>
+                                </div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <span class="legend-color critical"></span>
+                                        <span class="legend-label">Critical (40%)</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="legend-color warning"></span>
+                                        <span class="legend-label">Warning (35%)</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="legend-color info"></span>
+                                        <span class="legend-label">Info (25%)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container glass-card">
+                            <h4 class="chart-title">Code Coverage</h4>
+                            <div class="chart-content">
+                                <div class="progress-bars">
+                                    <div class="progress-item">
+                                        <span class="progress-label">Functions</span>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 85%"></div>
+                                        </div>
+                                        <span class="progress-value">85%</span>
+                                    </div>
+                                    <div class="progress-item">
+                                        <span class="progress-label">Lines</span>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 92%"></div>
+                                        </div>
+                                        <span class="progress-value">92%</span>
+                                    </div>
+                                    <div class="progress-item">
+                                        <span class="progress-label">Branches</span>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 78%"></div>
+                                        </div>
+                                        <span class="progress-value">78%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Enhanced loading overlay for API operations -->
+    <div id="loading-overlay" class="loading-overlay" role="dialog" aria-labelledby="loading-title" aria-describedby="loading-description" aria-hidden="true">
+        <div class="loading-content">
+            <div class="loading-spinner" aria-hidden="true"></div>
+            <h3 id="loading-title" class="loading-text">Processing...</h3>
+            <p id="loading-description" class="loading-subtext">Please wait while we analyze your code</p>
+            <div class="loading-progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Analysis progress">
+                <div class="loading-progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced notification container -->
+    <div id="notification-container" class="notification-container" aria-live="polite" aria-atomic="false"></div>
+
+    <!-- Offline indicator -->
+    <div id="offline-indicator" class="offline-indicator" role="alert" aria-live="assertive">
+        <span aria-hidden="true">📡</span> You're offline. Some features may not work.
+    </div>
+
+    <!-- Enhanced ARIA live regions -->
+    <div id="status-announcements" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+    <div id="error-announcements" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+    <!-- Authentication Modal -->
+    <div id="auth-modal" class="auth-modal" role="dialog" aria-labelledby="auth-modal-title" aria-hidden="true">
+        <div class="auth-modal-content glass-card">
+            <div class="auth-modal-header">
+                <h3 id="auth-modal-title" class="auth-modal-title">Sign In</h3>
+                <button id="close-auth-modal" class="close-btn" aria-label="Close authentication modal">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="auth-modal-body">
+                <form id="auth-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="auth-email" class="form-label">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="auth-email" 
+                            name="email" 
+                            class="form-input" 
+                            required 
+                            aria-describedby="email-help"
+                            placeholder="Enter your email address"
+                        >
+                        <div id="email-help" class="form-help">We'll create an API key for your account</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="rate-limit-tier" class="form-label">Rate Limit Tier</label>
+                        <select id="rate-limit-tier" name="rateLimitTier" class="form-select" aria-describedby="tier-help">
+                            <option value="basic">Basic (10 requests/min)</option>
+                            <option value="standard">Standard (30 requests/min)</option>
+                            <option value="premium">Premium (100 requests/min)</option>
+                        </select>
+                        <div id="tier-help" class="form-help">Choose your usage tier</div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="auth-submit-btn">
+                            <span class="btn-text">Create Account & Sign In</span>
+                            <span class="btn-loading" style="display: none;">Creating Account...</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="auth-cancel-btn">Cancel</button>
+                    </div>
+                </form>
+                <div id="auth-error" class="auth-error" role="alert" aria-live="assertive" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GSAP Animation Library (will be used in later tasks) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- API Client Module -->
+    <script src="api-client.js"></script>
+    
+    <!-- Enhanced Accessibility Features -->
+    <script src="accessibility-enhancements.js"></script>
+    
+    <!-- Main JavaScript file -->
+    <script src="app.js"></script>
+</body>
+</html>

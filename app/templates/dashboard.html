@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Review Assistant</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading"></div>
+            <p>Processing your code...</p>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1>🔍 Code Review Assistant</h1>
+            <p>Automated code analysis with AI-powered insights</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="upload">Upload Code</button>
+            <button class="nav-tab" data-tab="reports">My Reports</button>
+        </nav>
+
+        <!-- Upload Tab -->
+        <section id="uploadTab" class="tab-content active">
+            <div class="upload-section">
+                <div id="fileDropZone" class="file-drop-zone">
+                    <div class="drop-zone-content">
+                        <div class="drop-zone-icon">📁</div>
+                        <h3>Drop your code files here</h3>
+                        <p>or <strong>click to browse</strong></p>
+                        <p class="text-muted">Supports: .py, .js, .java, .ts, .go, .cpp, .c, .rb, .php files and .zip archives</p>
+                        <p class="text-muted">Maximum file size: 10MB</p>
+                    </div>
+                    <input type="file" id="fileInput" class="file-input" accept=".py,.js,.java,.ts,.go,.cpp,.c,.rb,.php,.zip" multiple>
+                </div>
+
+                <div class="upload-options">
+                    <div class="form-check">
+                        <input type="checkbox" id="asyncProcessing" class="form-check-input">
+                        <label for="asyncProcessing" class="form-check-label">Async processing (for large files)</label>
+                    </div>
+                    <select id="languageSelect" class="form-select">
+                        <option value="">Auto-detect language</option>
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="typescript">TypeScript</option>
+                        <option value="java">Java</option>
+                        <option value="go">Go</option>
+                        <option value="cpp">C++</option>
+                        <option value="c">C</option>
+                        <option value="ruby">Ruby</option>
+                        <option value="php">PHP</option>
+                    </select>
+                </div>
+
+                <div id="progressContainer" class="progress-container">
+                    <div class="progress">
+                        <div id="progressBar" class="progress-bar" role="progressbar"></div>
+                    </div>
+                    <p id="progressText" class="text-center mt-2">Uploading...</p>
+                </div>
+
+                <div id="statusMessage" class="status-message"></div>
+            </div>
+        </section>
+
+        <!-- Reports Tab -->
+        <section id="reportsTab" class="tab-content">
+            <div class="reports-header">
+                <h2>My Reports</h2>
+                <div class="reports-filters">
+                    <select id="statusFilter" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="processing">Processing</option>
+                        <option value="failed">Failed</option>
+                    </select>
+                    <select id="languageFilter" class="form-select">
+                        <option value="">All Languages</option>
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="typescript">TypeScript</option>
+                        <option value="java">Java</option>
+                        <option value="go">Go</option>
+                        <option value="cpp">C++</option>
+                        <option value="c">C</option>
+                        <option value="ruby">Ruby</option>
+                        <option value="php">PHP</option>
+                    </select>
+                    <button id="refreshReports" class="btn btn-secondary">Refresh</button>
+                </div>
+            </div>
+
+            <div id="reportsGrid" class="reports-grid">
+                <!-- Reports will be loaded here -->
+            </div>
+
+            <div id="reportsLoading" class="text-center" style="display: none;">
+                <div class="loading"></div>
+                <p>Loading reports...</p>
+            </div>
+
+            <div id="noReports" class="text-center" style="display: none;">
+                <p>No reports found. Upload some code to get started!</p>
+            </div>
+        </section>
+
+        <!-- Report Detail View -->
+        <section id="reportDetail" class="report-detail">
+            <div class="report-detail-header">
+                <div>
+                    <button id="backToReports" class="btn btn-secondary">← Back to Reports</button>
+                    <h2 id="reportDetailTitle" class="report-detail-title mt-2"></h2>
+                </div>
+                <div class="report-detail-meta">
+                    <div id="reportDetailMeta"></div>
+                </div>
+            </div>
+
+            <div id="reportDetailContent">
+                <!-- Report content will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

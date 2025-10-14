@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend Integration Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Frontend Integration Test</h1>
+    
+    <div class="test-section">
+        <h2>API Client Test</h2>
+        <button onclick="testAPIClient()">Test API Client</button>
+        <div id="api-test-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Real-time Results Display Test</h2>
+        <button onclick="testResultsDisplay()">Test Results Display</button>
+        <div id="results-test-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Mock Analysis Report</h2>
+        <button onclick="testMockReport()">Test with Mock Data</button>
+        <div id="mock-test-result"></div>
+    </div>
+
+    <!-- Include the API client and app.js -->
+    <script src="api-client.js"></script>
+    <script src="app.js"></script>
+    
+    <script>
+        function testAPIClient() {
+            const result = document.getElementById('api-test-result');
+            
+            if (typeof window.apiClient !== 'undefined') {
+                result.innerHTML = '<span class="success">✓ API Client loaded successfully</span>';
+                result.innerHTML += '<br><span class="info">Authenticated: ' + window.apiClient.isAuthenticated() + '</span>';
+            } else {
+                result.innerHTML = '<span class="error">✗ API Client not loaded</span>';
+            }
+        }
+        
+        function testResultsDisplay() {
+            const result = document.getElementById('results-test-result');
+            
+            // Test if the functions exist
+            const functions = [
+                'updateAnalysisResultsFromReport',
+                'updateAnalysisStatus',
+                'showAnalysisLoading',
+                'hideAnalysisLoading',
+                'triggerCodeAnalysis'
+            ];
+            
+            let allExist = true;
+            let output = '';
+            
+            functions.forEach(funcName => {
+                if (typeof window[funcName] === 'function') {
+                    output += '<span class="success">✓ ' + funcName + ' exists</span><br>';
+                } else {
+                    output += '<span class="error">✗ ' + funcName + ' missing</span><br>';
+                    allExist = false;
+                }
+            });
+            
+            if (allExist) {
+                output += '<span class="success">All real-time display functions are available!</span>';
+            }
+            
+            result.innerHTML = output;
+        }
+        
+        function testMockReport() {
+            const result = document.getElementById('mock-test-result');
+            
+            // Create mock report data
+            const mockReport = {
+                report_id: "test-123",
+                status: "completed",
+                filename: "test.py",
+                language: "python",
+                issues: [
+                    {
+                        type: "security",
+                        severity: "high",
+                        line: 5,
+                        message: "Potential SQL injection vulnerability",
+                        suggestion: "Use parameterized queries",
+                        confidence: 0.9
+                    },
+                    {
+                        type: "performance",
+                        severity: "medium",
+                        line: 12,
+                        message: "Inefficient loop detected",
+                        suggestion: "Consider using list comprehension",
+                        confidence: 0.7
+                    }
+                ],
+                report_summary: {
+                    total_issues: 2,
+                    high_severity_issues: 1,
+                    medium_severity_issues: 1,
+                    low_severity_issues: 0,
+                    confidence_score: 0.8
+                }
+            };
+            
+            try {
+                // Test the update function
+                if (typeof updateAnalysisResultsFromReport === 'function') {
+                    updateAnalysisResultsFromReport(mockReport);
+                    result.innerHTML = '<span class="success">✓ Mock report processed successfully!</span>';
+                    result.innerHTML += '<br><span class="info">Check the main page to see the updated results</span>';
+                } else {
+                    result.innerHTML = '<span class="error">✗ updateAnalysisResultsFromReport function not found</span>';
+                }
+            } catch (error) {
+                result.innerHTML = '<span class="error">✗ Error processing mock report: ' + error.message + '</span>';
+            }
+        }
+        
+        // Auto-run tests on load
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                testAPIClient();
+                testResultsDisplay();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
