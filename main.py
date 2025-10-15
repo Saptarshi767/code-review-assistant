@@ -137,6 +137,17 @@ async def get_config():
         "gemini_model": settings.gemini_model
     }
 
+@app.get("/api/reviews")
+async def get_reviews_fallback():
+    """Fallback endpoint for reports list when main service is unavailable."""
+    return {
+        "reports": [],
+        "total": 0,
+        "page": 1,
+        "limit": 50,
+        "total_pages": 0
+    }
+
 # Health check is now handled by the monitoring router
 
 if __name__ == "__main__":

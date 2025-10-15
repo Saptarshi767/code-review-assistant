@@ -212,8 +212,14 @@ class CodeReviewDashboard {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.detail?.message || `HTTP ${response.status}`);
+                let errorMessage = `HTTP ${response.status}`;
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.detail?.message || errorMessage;
+                } catch (e) {
+                    // If we can't parse error response, use status code
+                }
+                throw new Error(errorMessage);
             }
 
             const result = await response.json();
@@ -327,7 +333,11 @@ class CodeReviewDashboard {
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
+                // If reports endpoint fails, just show empty state instead of error
+                console.warn(`Reports endpoint returned ${response.status}, showing empty state`);
+                this.currentReports = [];
+                this.renderReports();
+                return;
             }
 
             const data = await response.json();
@@ -335,8 +345,10 @@ class CodeReviewDashboard {
             this.renderReports();
             
         } catch (error) {
-            console.error('Error loading reports:', error);
-            this.showReportsError('Failed to load reports');
+            console.warn('Error loading reports, showing empty state:', error);
+            // Show empty state instead of error to avoid breaking the UI
+            this.currentReports = [];
+            this.renderReports();
         } finally {
             this.showReportsLoading(false);
         }
