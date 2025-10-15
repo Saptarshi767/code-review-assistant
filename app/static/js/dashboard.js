@@ -5,7 +5,7 @@
 
 class CodeReviewDashboard {
     constructor() {
-        this.apiKey = this.getApiKey();
+        this.apiKey = null;
         this.currentReports = [];
         this.currentReport = null;
         this.uploadInProgress = false;
@@ -14,7 +14,12 @@ class CodeReviewDashboard {
         this.bindEvents();
         this.initializeTabs();
         
-        // Load reports on startup
+        // Initialize API key and load reports
+        this.initialize();
+    }
+    
+    async initialize() {
+        this.apiKey = await this.getApiKey();
         this.loadReports();
     }
 
@@ -75,19 +80,20 @@ class CodeReviewDashboard {
         this.switchTab('upload');
     }
 
-    getApiKey() {
-        // For demo purposes, use a default API key
-        // In production, this should be handled through proper authentication
-        let apiKey = localStorage.getItem('codeReviewApiKey');
-        if (!apiKey) {
-            apiKey = prompt('Please enter your API key:');
-            if (apiKey) {
-                localStorage.setItem('codeReviewApiKey', apiKey);
-            } else {
-                apiKey = 'demo-key-12345'; // Fallback for demo
+    async getApiKey() {
+        // Get API key from backend configuration
+        try {
+            const response = await fetch('/api/config');
+            if (response.ok) {
+                const config = await response.json();
+                return config.gemini_api_key || 'demo-key-12345';
             }
+        } catch (error) {
+            console.error('Failed to fetch API key from backend:', error);
         }
-        return apiKey;
+        
+        // Fallback to demo key if backend is not available
+        return 'demo-key-12345';
     }
 
     // Tab Management
@@ -176,6 +182,11 @@ class CodeReviewDashboard {
     }
 
     async uploadFile(file) {
+        if (!this.apiKey) {
+            this.showStatus('API key not available. Please refresh the page.', 'error');
+            return;
+        }
+
         this.uploadInProgress = true;
         this.fileDropZone.classList.add('processing');
         this.showProgress(0, 'Preparing upload...');
@@ -302,6 +313,10 @@ class CodeReviewDashboard {
 
     // Reports Management
     async loadReports() {
+        if (!this.apiKey) {
+            return; // Skip loading if API key not ready yet
+        }
+
         this.showReportsLoading(true);
         
         try {
