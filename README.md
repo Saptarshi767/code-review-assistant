@@ -2,6 +2,9 @@
 
 An automated code analysis system that provides LLM-powered code reviews through a REST API. Upload source code files and receive structured feedback on code quality, security vulnerabilities, performance issues, and best practices.
 
+# Video Demo: https://drive.google.com/file/d/1QR0v7SEcMGKYfgo8fVdBfDEL9OyW4-Jh/view?usp=sharing
+
+
 ## Features
 
 - **Multi-language Support**: Analyze Python, JavaScript, TypeScript, Java, Go, C++, C, Ruby, and PHP files
