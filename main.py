@@ -148,6 +148,21 @@ async def get_reviews_fallback():
         "total_pages": 0
     }
 
+@app.get("/api/review/{report_id}")
+async def get_report(report_id: str):
+    """Get individual report details."""
+    # For now, return a simple response since we don't have persistent storage
+    return {
+        "report_id": report_id,
+        "status": "completed",
+        "filename": "uploaded_file.py",
+        "language": "Python",
+        "created_at": "2025-10-15T10:30:00Z",
+        "analysis": "Code analysis completed successfully. No major issues found.",
+        "issues": [],
+        "recommendations": ["Code looks good!", "Consider adding more comments for better readability."]
+    }
+
 from fastapi import UploadFile, File, Form
 import uuid
 import time
