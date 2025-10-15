@@ -36,7 +36,9 @@ document.addEventListener('DOMContentLoaded', function() {
     registerServiceWorker();
     
     // Initialize API integration
-    initializeAPIIntegration();
+    initializeAPIIntegration().catch(error => {
+        console.error('Failed to initialize API integration:', error);
+    });
 });
 
 /**
@@ -947,7 +949,7 @@ function updateLineNumbers(code) {
 /**
  * Initialize API integration
  */
-function initializeAPIIntegration() {
+async function initializeAPIIntegration() {
     // Check if GeminiClient is available
     if (typeof GeminiClient === 'undefined') {
         console.warn('GeminiClient not loaded yet, retrying...');
@@ -955,17 +957,31 @@ function initializeAPIIntegration() {
         return;
     }
     
-    // Initialize Gemini client with API key
-    const geminiApiKey = 'AIzaSyBM7Jy7lAdKku6oxxwnRFILAO2T8XLO0rM'; // Your API key from .env
-    
-    if (!geminiApiKey) {
-        console.error('Gemini API key not found. Please check your configuration.');
-        showAnalysisError('Gemini API key not configured. Please check your settings.');
+    // Initialize Gemini client with API key from backend
+    try {
+        const configResponse = await fetch('/api/config');
+        if (!configResponse.ok) {
+            throw new Error('Failed to fetch configuration');
+        }
+        
+        const config = await configResponse.json();
+        const geminiApiKey = config.gemini_api_key;
+        
+        if (!geminiApiKey) {
+            console.error('Gemini API key not found in configuration.');
+            showAnalysisError('Gemini API key not configured. Please check your settings.');
+            return;
+        }
+        
+        // Initialize Gemini client
+        window.geminiClient = new GeminiClient(geminiApiKey);
+        console.log('Gemini client initialized successfully');
+        
+    } catch (error) {
+        console.error('Failed to initialize Gemini client:', error);
+        showAnalysisError('Failed to initialize AI client. Please check your connection.');
         return;
     }
-    
-    // Initialize Gemini client
-    window.geminiClient = new GeminiClient(geminiApiKey);
     
     console.log('Initializing Gemini API integration...');
     

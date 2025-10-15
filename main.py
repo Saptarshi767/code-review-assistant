@@ -128,6 +128,15 @@ async def api_info():
         "docs": "/docs"
     }
 
+@app.get("/api/config")
+async def get_config():
+    """Get frontend configuration."""
+    return {
+        "gemini_api_key": settings.gemini_api_key,
+        "llm_provider": settings.llm_provider,
+        "gemini_model": settings.gemini_model
+    }
+
 # Health check is now handled by the monitoring router
 
 if __name__ == "__main__":
