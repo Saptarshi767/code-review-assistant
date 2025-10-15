@@ -157,7 +157,10 @@ async def get_report(report_id: str):
         "status": "completed",
         "filename": "uploaded_file.py",
         "language": "Python",
-        "created_at": "2025-10-15T10:30:00Z",
+        "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "file_size": 1024,
+        "processing_time_ms": 1500,
+        "summary": "Code analysis completed successfully. No major issues found.",
         "analysis": "Code analysis completed successfully. No major issues found.",
         "issues": [],
         "recommendations": ["Code looks good!", "Consider adding more comments for better readability."]
@@ -241,7 +244,11 @@ async def simple_upload(file: UploadFile = File(...)):
             "status": "completed",
             "filename": file.filename,
             "language": detected_language,
-            "analysis": analysis_text
+            "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "summary": f"Analysis completed for {detected_language} file",
+            "analysis": analysis_text,
+            "issues": [],
+            "recommendations": ["File processed successfully"]
         }
         
     except Exception as e:
