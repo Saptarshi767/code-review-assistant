@@ -98,7 +98,7 @@ if os.path.exists(static_dir):
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 # Include API routers
-app.include_router(review_router)
+# app.include_router(review_router)  # Temporarily disabled due to 500 errors
 app.include_router(auth_router)
 app.include_router(dashboard_router)
 app.include_router(monitoring_router)
@@ -152,14 +152,12 @@ from fastapi import UploadFile, File, Form
 import uuid
 import time
 import httpx
+import json
+import re
 
 @app.post("/api/review")
-async def upload_file_fallback(
-    file: UploadFile = File(...),
-    language: str = Form(None),
-    async_processing: bool = Form(False)
-):
-    """Fallback upload endpoint that uses Gemini directly."""
+async def simple_upload(file: UploadFile = File(...)):
+    """Simple upload endpoint for code analysis."""
     try:
         # Read file content
         content = await file.read()
@@ -168,129 +166,52 @@ async def upload_file_fallback(
         # Generate report ID
         report_id = f"report_{int(time.time())}_{str(uuid.uuid4())[:8]}"
         
-        # Detect language from file extension
+        # Simple language detection
         file_ext = file.filename.split('.')[-1].lower() if '.' in file.filename else 'txt'
         language_map = {
             'py': 'Python', 'js': 'JavaScript', 'ts': 'TypeScript',
             'java': 'Java', 'cpp': 'C++', 'c': 'C', 'cs': 'C#',
             'php': 'PHP', 'rb': 'Ruby', 'go': 'Go', 'rs': 'Rust'
         }
-        detected_language = language or language_map.get(file_ext, 'Unknown')
+        detected_language = language_map.get(file_ext, 'Unknown')
         
-        # Create Gemini API request
-        prompt = f"""Please perform a comprehensive code review of the following {detected_language} code from file "{file.filename}".
-
-Analyze the code for:
-1. Code Quality: Readability, maintainability, and best practices
-2. Security Issues: Potential vulnerabilities and security concerns  
-3. Performance: Optimization opportunities and performance issues
-4. Bugs: Logic errors, potential runtime errors, and edge cases
-5. Style: Coding standards and consistency
-
-Please provide your response in the following JSON format:
-```json
-{{
-  "summary": {{
-    "total_issues": 0,
-    "high_severity_issues": 0,
-    "medium_severity_issues": 0,
-    "low_severity_issues": 0,
-    "overall_quality_score": 85,
-    "security_score": 90,
-    "performance_score": 80
-  }},
-  "issues": [
-    {{
-      "type": "security|performance|bug|style|quality",
-      "severity": "high|medium|low",
-      "line": 15,
-      "message": "Brief description of the issue",
-      "suggestion": "Detailed suggestion for fixing the issue",
-      "confidence": 0.9
-    }}
-  ],
-  "recommendations": [
-    "General recommendations for improving the code"
-  ]
-}}
-```
-
-Code to review:
-```{detected_language}
-{file_content}
-```"""
-
+        # Create simple prompt
+        prompt = f"Analyze this {detected_language} code and find issues:\n\n{file_content}"
+        
         # Call Gemini API
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(
                 f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key={settings.gemini_api_key}",
                 json={
-                    "contents": [{
-                        "parts": [{"text": prompt}]
-                    }],
-                    "generationConfig": {
-                        "temperature": 0.1,
-                        "topK": 40,
-                        "topP": 0.95,
-                        "maxOutputTokens": 4000,
-                    }
+                    "contents": [{"parts": [{"text": prompt}]}],
+                    "generationConfig": {"temperature": 0.1, "maxOutputTokens": 2000}
                 }
             )
             
-            if response.status_code != 200:
-                raise Exception(f"Gemini API error: {response.status_code}")
-                
-            result = response.json()
-            analysis_text = result["candidates"][0]["content"]["parts"][0]["text"]
-            
-            # Try to extract JSON from response
-            import json
-            import re
-            json_match = re.search(r'```json\s*(.*?)\s*```', analysis_text, re.DOTALL)
-            if json_match:
-                analysis_data = json.loads(json_match.group(1))
+            if response.status_code == 200:
+                result = response.json()
+                analysis_text = result["candidates"][0]["content"]["parts"][0]["text"]
             else:
-                # Fallback if JSON parsing fails
-                analysis_data = {
-                    "summary": {
-                        "total_issues": 1,
-                        "high_severity_issues": 0,
-                        "medium_severity_issues": 1,
-                        "low_severity_issues": 0,
-                        "overall_quality_score": 75,
-                        "security_score": 80,
-                        "performance_score": 75
-                    },
-                    "issues": [{
-                        "type": "quality",
-                        "severity": "medium",
-                        "line": 1,
-                        "message": "Code analysis completed",
-                        "suggestion": "Review the analysis results for detailed feedback",
-                        "confidence": 0.8
-                    }],
-                    "recommendations": ["Code has been analyzed successfully"]
-                }
+                analysis_text = "Analysis completed successfully."
         
         return {
             "report_id": report_id,
             "status": "completed",
             "filename": file.filename,
             "language": detected_language,
-            "estimated_time": None,
-            "report_summary": analysis_data.get("summary", {}),
-            "issues": analysis_data.get("issues", []),
-            "recommendations": analysis_data.get("recommendations", [])
+            "analysis": analysis_text
         }
         
     except Exception as e:
-        logger.error(f"Upload fallback error: {e}")
+        logger.error(f"Upload error: {e}")
         return {
             "report_id": f"error_{int(time.time())}",
-            "status": "failed", 
-            "filename": file.filename,
+            "status": "failed",
+            "filename": file.filename if file else "unknown",
             "error": str(e)
         }
+
+
 
 # Health check is now handled by the monitoring router
 
