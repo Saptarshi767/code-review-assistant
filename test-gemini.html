@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Gemini Integration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .test-container {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        button {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #5855eb;
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            background: #1a1a1a;
+            color: white;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+        }
+        .result {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border-left: 4px solid #6366f1;
+        }
+        .error {
+            border-left-color: #ef4444;
+            background: #2a1a1a;
+        }
+        .loading {
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gemini API Integration Test</h1>
+    
+    <div class="test-container">
+        <h2>Test Code Analysis</h2>
+        <textarea id="test-code" placeholder="Enter code to analyze...">
+function calculateTotal(items) {
+    var total = 0;
+    for (var i = 0; i < items.length; i++) {
+        total += items[i].price * items[i].quantity;
+    }
+    return total;
+}
+
+const items = [
+    { price: 10, quantity: 2 },
+    { price: 5, quantity: null }
+];
+
+console.log(calculateTotal(items));
+        </textarea>
+        <br>
+        <button id="analyze-btn">Analyze Code</button>
+        <button id="clear-btn">Clear Results</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script src="gemini-client.js"></script>
+    <script>
+        const geminiApiKey = 'AIzaSyBM7Jy7lAdKku6oxxwnRFILAO2T8XLO0rM';
+        const geminiClient = new GeminiClient(geminiApiKey);
+        
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const testCode = document.getElementById('test-code');
+        const results = document.getElementById('results');
+        
+        analyzeBtn.addEventListener('click', async () => {
+            const code = testCode.value.trim();
+            if (!code) {
+                showResult('Please enter some code to analyze', true);
+                return;
+            }
+            
+            analyzeBtn.disabled = true;
+            analyzeBtn.textContent = 'Analyzing...';
+            analyzeBtn.classList.add('loading');
+            
+            try {
+                const report = await geminiClient.analyzeCode(code, 'test.js');
+                showResult(JSON.stringify(report, null, 2));
+                
+                // Also show a formatted summary
+                const summary = document.createElement('div');
+                summary.className = 'result';
+                summary.innerHTML = `
+                    <h3>Analysis Summary</h3>
+                    <p><strong>Issues Found:</strong> ${report.issues?.length || 0}</p>
+                    <p><strong>Quality Score:</strong> ${report.report_summary?.overall_quality_score || 'N/A'}</p>
+                    <p><strong>Security Score:</strong> ${report.report_summary?.security_score || 'N/A'}</p>
+                    ${report.issues?.length > 0 ? '<h4>Issues:</h4>' : ''}
+                    ${report.issues?.map(issue => `
+                        <div style="margin: 10px 0; padding: 10px; background: #333; border-radius: 4px;">
+                            <strong>${issue.severity?.toUpperCase()}</strong> - ${issue.message}<br>
+                            <small>Line ${issue.line}: ${issue.suggestion}</small>
+                        </div>
+                    `).join('') || ''}
+                `;
+                results.appendChild(summary);
+                
+            } catch (error) {
+                showResult(`Error: ${error.message}`, true);
+                console.error('Analysis failed:', error);
+            } finally {
+                analyzeBtn.disabled = false;
+                analyzeBtn.textContent = 'Analyze Code';
+                analyzeBtn.classList.remove('loading');
+            }
+        });
+        
+        clearBtn.addEventListener('click', () => {
+            results.innerHTML = '';
+        });
+        
+        function showResult(text, isError = false) {
+            const result = document.createElement('div');
+            result.className = `result ${isError ? 'error' : ''}`;
+            result.innerHTML = `<pre>${text}</pre>`;
+            results.appendChild(result);
+        }
+        
+        // Test API key on load
+        window.addEventListener('load', async () => {
+            try {
+                const isValid = await geminiClient.validateApiKey();
+                showResult(`API Key Status: ${isValid ? 'Valid ✅' : 'Invalid ❌'}`, !isValid);
+            } catch (error) {
+                showResult(`API Key Validation Error: ${error.message}`, true);
+            }
+        });
+    </script>
+</body>
+</html>

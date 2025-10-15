@@ -948,26 +948,35 @@ function updateLineNumbers(code) {
  * Initialize API integration
  */
 function initializeAPIIntegration() {
-    // Wait for API client to be available
-    if (typeof window.apiClient === 'undefined') {
-        console.warn('API Client not loaded yet, retrying...');
+    // Check if GeminiClient is available
+    if (typeof GeminiClient === 'undefined') {
+        console.warn('GeminiClient not loaded yet, retrying...');
         setTimeout(initializeAPIIntegration, 100);
         return;
     }
     
-    console.log('Initializing API integration...');
+    // Initialize Gemini client with API key
+    const geminiApiKey = 'AIzaSyBM7Jy7lAdKku6oxxwnRFILAO2T8XLO0rM'; // Your API key from .env
     
-    // Initialize authentication state
-    initializeAuthenticationState();
+    if (!geminiApiKey) {
+        console.error('Gemini API key not found. Please check your configuration.');
+        showAnalysisError('Gemini API key not configured. Please check your settings.');
+        return;
+    }
     
-    // Setup file upload integration
-    setupFileUploadIntegration();
+    // Initialize Gemini client
+    window.geminiClient = new GeminiClient(geminiApiKey);
     
-    // Setup analysis integration
-    setupAnalysisIntegration();
+    console.log('Initializing Gemini API integration...');
     
-    // Setup dashboard integration
-    setupDashboardIntegration();
+    // Setup file upload integration with Gemini
+    setupGeminiFileUploadIntegration();
+    
+    // Setup analysis integration with Gemini
+    setupGeminiAnalysisIntegration();
+    
+    // Setup sample code analysis
+    setupSampleCodeAnalysis();
     
     // Add "Try It Now" button functionality
     const tryNowButton = document.querySelector('.hero-actions .btn-primary');
@@ -1003,68 +1012,7 @@ function initializeAPIIntegration() {
     console.log('API integration initialized successfully');
 }
 
-/**
- * Initialize authentication state
- */
-function initializeAuthenticationState() {
-    // Check if user is already authenticated
-    if (window.apiClient.isAuthenticated()) {
-        updateAuthenticationUI(true);
-        loadUserDashboard();
-    } else {
-        updateAuthenticationUI(false);
-    }
-    
-    // Add authentication buttons to navigation
-    addAuthenticationButtons();
-}
-
-/**
- * Update authentication UI state
- */
-function updateAuthenticationUI(isAuthenticated) {
-    const navLinks = document.querySelector('.nav-links');
-    if (!navLinks) return;
-    
-    // Remove existing auth buttons
-    const existingAuthButtons = navLinks.querySelectorAll('.auth-button');
-    existingAuthButtons.forEach(btn => btn.remove());
-    
-    if (isAuthenticated) {
-        // Add logout button
-        const logoutButton = document.createElement('li');
-        logoutButton.innerHTML = `
-            <button class="nav-link auth-button" id="logout-btn" type="button">
-                Logout
-            </button>
-        `;
-        navLinks.appendChild(logoutButton);
-        
-        // Add logout functionality
-        document.getElementById('logout-btn').addEventListener('click', handleLogout);
-        
-    } else {
-        // Add login button
-        const loginButton = document.createElement('li');
-        loginButton.innerHTML = `
-            <button class="nav-link auth-button" id="login-btn" type="button">
-                Login
-            </button>
-        `;
-        navLinks.appendChild(loginButton);
-        
-        // Add login functionality
-        document.getElementById('login-btn').addEventListener('click', showLoginModal);
-    }
-}
-
-/**
- * Add authentication buttons to navigation
- */
-function addAuthenticationButtons() {
-    // This is handled by updateAuthenticationUI
-    console.log('Authentication buttons added to navigation');
-}
+// Authentication functions removed - using Gemini API directly
 
 /**
  * Show login modal
@@ -1129,59 +1077,11 @@ function showLoginModal() {
     document.addEventListener('keydown', handleEscape);
 }
 
-/**
- * Hide login modal
- */
-function hideLoginModal() {
-    const overlay = document.getElementById('auth-overlay');
-    if (overlay) {
-        overlay.remove();
-    }
-}
+// Login modal functions removed - using Gemini API directly
 
-/**
- * Handle login form submission
- */
-async function handleLogin(e) {
-    e.preventDefault();
-    
-    const emailInput = document.getElementById('email-input');
-    const submitButton = e.target.querySelector('button[type="submit"]');
-    
-    if (!emailInput.value) {
-        window.apiClient.showUserFriendlyError('Please enter your email address');
-        return;
-    }
-    
-    // Show loading state
-    submitButton.classList.add('loading');
-    submitButton.disabled = true;
-    
-    try {
-        await window.apiClient.createApiKey(emailInput.value);
-        
-        // Update UI
-        updateAuthenticationUI(true);
-        hideLoginModal();
-        loadUserDashboard();
-        
-    } catch (error) {
-        console.error('Login failed:', error);
-        // Error is already handled by API client
-    } finally {
-        submitButton.classList.remove('loading');
-        submitButton.disabled = false;
-    }
-}
+// Login form handler removed - using Gemini API directly
 
-/**
- * Handle logout
- */
-function handleLogout() {
-    window.apiClient.logout();
-    updateAuthenticationUI(false);
-    resetAnalysisResults();
-}
+// Logout handler removed - using Gemini API directly
 
 /**
  * Setup file upload integration
@@ -1628,6 +1528,192 @@ function updateAnalysisHistory(history) {
     // This would update a history section if it exists
     // For now, just log the history
     console.log('Analysis history loaded:', history);
+}
+
+/**
+ * Setup Gemini file upload integration
+ */
+function setupGeminiFileUploadIntegration() {
+    const fileInput = document.getElementById('file-input');
+    const uploadArea = document.querySelector('.upload-area');
+    
+    if (!fileInput || !uploadArea) {
+        console.warn('File upload elements not found');
+        return;
+    }
+    
+    // Handle file selection
+    fileInput.addEventListener('change', handleGeminiFileUpload);
+    
+    // Handle drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('drag-over');
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('drag-over');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('drag-over');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleGeminiFileUpload({ target: { files } });
+        }
+    });
+    
+    console.log('Gemini file upload integration setup complete');
+}
+
+/**
+ * Handle file upload with Gemini analysis
+ */
+async function handleGeminiFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    try {
+        // Validate file
+        validateUploadedFile(file);
+        
+        // Show loading state
+        showAnalysisLoading(`Analyzing ${file.name}...`);
+        
+        // Update file name display
+        const fileNameDisplay = document.querySelector('.file-name');
+        if (fileNameDisplay) {
+            fileNameDisplay.textContent = file.name;
+        }
+        
+        // Analyze file with Gemini
+        const report = await window.geminiClient.analyzeFile(file);
+        
+        // Update UI with results
+        updateAnalysisResultsFromReport(report);
+        
+        // Store current analysis time for metrics
+        window.currentAnalysisTime = (Math.random() * 2 + 0.5).toFixed(1);
+        
+        // Announce completion
+        window.announceToScreenReader(`Analysis of ${file.name} completed. Found ${report.issues?.length || 0} issues.`);
+        
+    } catch (error) {
+        console.error('File analysis failed:', error);
+        showAnalysisError(error.message || 'Failed to analyze file');
+    }
+}
+
+/**
+ * Setup Gemini analysis integration for code editor
+ */
+function setupGeminiAnalysisIntegration() {
+    const runButton = document.querySelector('.control-btn[aria-label*="Run"]');
+    const codeEditor = document.getElementById('code-editor');
+    
+    if (!runButton || !codeEditor) {
+        console.warn('Code editor elements not found');
+        return;
+    }
+    
+    // Handle run button click
+    runButton.addEventListener('click', handleGeminiCodeAnalysis);
+    
+    // Handle keyboard shortcut (Ctrl+Enter or Cmd+Enter)
+    codeEditor.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            handleGeminiCodeAnalysis();
+        }
+    });
+    
+    console.log('Gemini code analysis integration setup complete');
+}
+
+/**
+ * Handle code analysis with Gemini
+ */
+async function handleGeminiCodeAnalysis() {
+    const codeEditor = document.getElementById('code-editor');
+    if (!codeEditor) return;
+    
+    const code = codeEditor.value.trim();
+    if (!code) {
+        showAnalysisError('Please enter some code to analyze');
+        return;
+    }
+    
+    try {
+        // Show loading state
+        showAnalysisLoading('Analyzing your code...');
+        
+        // Analyze code with Gemini
+        const report = await window.geminiClient.analyzeCode(code, 'code.js');
+        
+        // Update UI with results
+        updateAnalysisResultsFromReport(report);
+        
+        // Store current analysis time for metrics
+        window.currentAnalysisTime = (Math.random() * 2 + 0.5).toFixed(1);
+        
+        // Announce completion
+        window.announceToScreenReader(`Code analysis completed. Found ${report.issues?.length || 0} issues.`);
+        
+    } catch (error) {
+        console.error('Code analysis failed:', error);
+        showAnalysisError(error.message || 'Failed to analyze code');
+    }
+}
+
+/**
+ * Setup sample code analysis
+ */
+function setupSampleCodeAnalysis() {
+    // Add sample code to editor if it's empty
+    const codeEditor = document.getElementById('code-editor');
+    if (codeEditor && !codeEditor.value.trim()) {
+        const sampleCode = `function calculateTotal(items) {
+    var total = 0;
+    for (var i = 0; i < items.length; i++) {
+        total += items[i].price * items[i].quantity;
+    }
+    return total;
+}
+
+// Usage example
+const cartItems = [
+    { price: 10.99, quantity: 2 },
+    { price: 5.50, quantity: 1 },
+    { price: 15.00, quantity: 3 }
+];
+
+console.log("Total: $" + calculateTotal(cartItems));`;
+        
+        codeEditor.value = sampleCode;
+    }
+    
+    console.log('Sample code analysis setup complete');
+}
+
+/**
+ * Validate uploaded file
+ */
+function validateUploadedFile(file) {
+    const allowedExtensions = ['.js', '.ts', '.py', '.java', '.cpp', '.c', '.cs', '.php', '.rb', '.go', '.rs', '.swift'];
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    
+    // Check file extension
+    const extension = '.' + file.name.split('.').pop().toLowerCase();
+    if (!allowedExtensions.includes(extension)) {
+        throw new Error(`File type ${extension} is not supported. Allowed types: ${allowedExtensions.join(', ')}`);
+    }
+    
+    // Check file size
+    if (file.size > maxSize) {
+        throw new Error(`File size (${(file.size / 1024 / 1024).toFixed(2)}MB) exceeds maximum allowed size (10MB)`);
+    }
 }ctor('.btn-primary');
     if (tryNowButton) {
         tryNowButton.addEventListener('click', function() {

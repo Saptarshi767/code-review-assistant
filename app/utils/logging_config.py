@@ -72,9 +72,19 @@ def get_logging_config() -> Dict[str, Any]:
     # Determine if we're in development mode
     debug_mode = os.getenv('DEBUG', 'false').lower() == 'true'
     
-    # Create logs directory if it doesn't exist
-    log_dir = os.getenv('LOG_DIR', './logs')
-    os.makedirs(log_dir, exist_ok=True)
+    # Handle log directory for serverless environments
+    if os.environ.get('VERCEL'):
+        log_dir = '/tmp/logs'
+    else:
+        log_dir = os.getenv('LOG_DIR', './logs')
+    
+    # Create logs directory if it doesn't exist (only if writable)
+    try:
+        os.makedirs(log_dir, exist_ok=True)
+        file_logging_enabled = True
+    except OSError:
+        # In read-only environments, disable file logging
+        file_logging_enabled = False
     
     config = {
         'version': 1,
@@ -104,7 +114,46 @@ def get_logging_config() -> Dict[str, Any]:
                 'formatter': 'detailed' if debug_mode else 'standard',
                 'filters': ['request_id'],
                 'stream': sys.stdout
+            }
+        },
+        'loggers': {
+            # Application loggers
+            'app': {
+                'level': log_level,
+                'handlers': ['console'],
+                'propagate': False
             },
+            'request_logger': {
+                'level': 'INFO',
+                'handlers': ['console'],
+                'propagate': False
+            },
+            # FastAPI and Uvicorn loggers
+            'uvicorn': {
+                'level': 'INFO',
+                'handlers': ['console'],
+                'propagate': False
+            },
+            'uvicorn.access': {
+                'level': 'INFO',
+                'handlers': ['console'],
+                'propagate': False
+            },
+            'fastapi': {
+                'level': log_level,
+                'handlers': ['console'],
+                'propagate': False
+            }
+        },
+        'root': {
+            'level': log_level,
+            'handlers': ['console']
+        }
+    }
+    
+    # Add file handlers only if file logging is enabled
+    if file_logging_enabled:
+        config['handlers'].update({
             'file': {
                 'class': 'logging.handlers.RotatingFileHandler',
                 'level': log_level,
@@ -135,41 +184,14 @@ def get_logging_config() -> Dict[str, Any]:
                 'backupCount': 10,
                 'encoding': 'utf8'
             }
-        },
-        'loggers': {
-            # Application loggers
-            'app': {
-                'level': log_level,
-                'handlers': ['console', 'file'],
-                'propagate': False
-            },
-            'request_logger': {
-                'level': 'INFO',
-                'handlers': ['console', 'request_file'],
-                'propagate': False
-            },
-            # FastAPI and Uvicorn loggers
-            'uvicorn': {
-                'level': 'INFO',
-                'handlers': ['console'],
-                'propagate': False
-            },
-            'uvicorn.access': {
-                'level': 'INFO',
-                'handlers': ['request_file'],
-                'propagate': False
-            },
-            'fastapi': {
-                'level': log_level,
-                'handlers': ['console', 'file'],
-                'propagate': False
-            }
-        },
-        'root': {
-            'level': log_level,
-            'handlers': ['console', 'file', 'error_file']
-        }
-    }
+        })
+        
+        # Update loggers to include file handlers
+        config['loggers']['app']['handlers'].extend(['file'])
+        config['loggers']['request_logger']['handlers'].extend(['request_file'])
+        config['loggers']['uvicorn.access']['handlers'].extend(['request_file'])
+        config['loggers']['fastapi']['handlers'].extend(['file'])
+        config['root']['handlers'].extend(['file', 'error_file'])
     
     return config
 

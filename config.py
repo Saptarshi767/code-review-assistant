@@ -65,9 +65,18 @@ class Settings(BaseSettings):
         
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # Create directories if they don't exist
-        os.makedirs(self.upload_dir, exist_ok=True)
-        os.makedirs(self.reports_dir, exist_ok=True)
+        # In serverless environments like Vercel, use /tmp for writable storage
+        if os.environ.get('VERCEL'):
+            self.upload_dir = "/tmp/uploads"
+            self.reports_dir = "/tmp/reports"
+        
+        # Create directories if they don't exist (only if writable)
+        try:
+            os.makedirs(self.upload_dir, exist_ok=True)
+            os.makedirs(self.reports_dir, exist_ok=True)
+        except OSError:
+            # In read-only environments, directories will be created on-demand
+            pass
 
 
 # Global settings instance
